@@ -32,14 +32,14 @@ in modern oceans. Other fish such as paddlefish,
 garpike and stingray are also present.'''
 ]
 
-# pomocný list
-text = set()
+# převod na pomocný list
+text = list()
 
-# oddělovač
+# oddělovač a podtržítko v textu
 znak = "-" *40
 hvezda = "*"
 
-# přihlášení
+# přihlášení do programu
 username = input("username:")
 password = input("password:")
 print(znak)
@@ -52,29 +52,34 @@ uzivatele = {
     "liz": "pass123"
 }
 
-# přístupu uživatele a výběr textu uživatelem
+# kontrola ověření hesla a jména
 if uzivatele.get(username) == password:
     print("Welcom to the app,", username,"\n","We have 3 texts to be analyzed.","\n",znak)
-    vyber_textu = int(input("Enter a number btw. 1 and 3 to select: "))
-    if vyber_textu == 1:
-        text = TEXTS[0].split()
-        print(znak)
-    elif vyber_textu == 2:
-        text = TEXTS[1].split()
-        print(znak)
-    elif vyber_textu == 3:
-        text = TEXTS[2].split()
-        print(znak)
-    else:
-        ("You have made a wrong selection. The program ends.")
+    vyber_textu = input("Enter a number btw. 1 and 3 to select: ")
+    try:
+        vyber_textu == int(vyber_textu) #řeší, jestli bylo zadáno číslo nebo text
+        if int(vyber_textu) == 1:   #výběr prvního odstavce z TEXTu
+            text = TEXTS[0].split() 
+            print(znak)
+        elif int(vyber_textu) == 2: #výběr druhého odstavce z TEXTu
+            text = TEXTS[1].split() 
+            print(znak)
+        elif int(vyber_textu) == 3: #výběr třetího odstavce z TEXTu
+            text = TEXTS[2].split() 
+            print(znak)
+    except:
+        print("You have made a wrong selection. The program ends.")
+        exit() #ukončeního programu, když nevyberé uživatel text 1 - 3
 else: 
     print("Unregistered user, terminating the program..") 
+    exit() #ukončení když není uživatel registrován
 
 # rozdělení textu podle zadání
 velka_pismena = 0
 zacinaji_velkym_pismem = 0
 mala_pismena = 0
 cisla = 0
+pocet_slov = len(text)
 
 for slovo in text:
     if slovo.islower():
@@ -86,49 +91,39 @@ for slovo in text:
     elif slovo.isupper():
         velka_pismena += 1
 
-# soucet cislic v textu
-sum = 0
+# soucet všech čísel v textu
+total_sum = 0
 for cislo in text:
     if cislo.isnumeric():
-        sum += int(cislo)
+        total_sum += int(cislo)
 
 # počet pismen ve slově
+# rozdělení na slova bez čárek a teček
 pocet_pismen = []
 for slovo in text: 
-    pocet_pismen.append(len((slovo.replace('.', '').replace(',', ''))))
+    pocet_pismen.append(len((slovo.replace('.', '').replace(',', '')))) 
 
-jedna = pocet_pismen.count(1)
-dve = pocet_pismen.count(2)
-tri = pocet_pismen.count(3)
-ctyri = pocet_pismen.count(4)
-pet = pocet_pismen.count(5)
-sest = pocet_pismen.count(6)
-sedm = pocet_pismen.count(7)
-osm = pocet_pismen.count(8)
-devet = pocet_pismen.count(9)
-deset = pocet_pismen.count(10)
-jedenact = pocet_pismen.count(11)
-
-# vysledek
-print(f'''There are {len(text)} words in the selected text.
+# vypis podle zadání
+print(f'''There are {pocet_slov} words in the selected text.
 There are {zacinaji_velkym_pismem} titlecase words.
 There are {velka_pismena} uppercase words.
 There are {mala_pismena} lowercase words.
 There are {cisla} numeric strings.
-The sum of all the numbers {sum}\n''', znak
+The sum of all the numbers {total_sum}\n''', znak
 )
 
-# počet písmenek
-print(f'''LEN|\tOCCURENCES\t|NR.\n {znak}
-  1|{jedna * hvezda}{(20 - int(jedna)) * " "}|{jedna}
-  2|{dve * hvezda}{(20 - int(dve)) * " "}|{dve}
-  3|{tri * hvezda}{(20 - int(tri)) * " "}|{tri}
-  4|{ctyri * hvezda}{(20 - int(ctyri)) * " "}|{ctyri}
-  5|{pet * hvezda}{(20 - int(pet)) * " "}|{pet}
-  6|{sest * hvezda}{(20 - int(sest)) * " "}|{sest}
-  7|{sedm * hvezda}{(20 - int(sedm)) * " "}|{sedm}
-  8|{osm * hvezda}{(20 - int(osm)) * " "}|{osm}
-  9|{devet * hvezda}{(20 - int(devet)) * " "}|{devet}
- 10|{deset * hvezda}{(20 - int(deset)) * " "}|{deset}
- 11|{jedenact * hvezda}{(20 - int(jedenact)) * " "}|{jedenact}'''
-)
+# vytvoření tabulky s počtem stejně dlouhých slov
+tabulka = dict()
+radek = 1
+while radek <= len(pocet_pismen): 
+    tabulka[radek] = pocet_pismen.count(radek)
+    radek += 1
+
+#vygenerování tabulky bez prázdných řádku
+print(f'''LEN|\tOCCURENCES\t|NR.\n{znak}''')
+for key in tabulka: 
+    if tabulka[key] != 0:
+        if key < 10: #zarovnani označených řádků - jednociferných
+            print("",key,"|",tabulka[key] * hvezda,(17 - tabulka[key]) * " ","|",tabulka[key])
+        else: #zarovnani označených řádků - dvouciferných
+            print(key,"|",tabulka[key] * hvezda,(17 - tabulka[key]) * " ","|",tabulka[key])
