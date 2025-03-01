@@ -97,7 +97,6 @@ for cislo in text:
     if cislo.isnumeric():
         total_sum += int(cislo)
 
-# počet pismen ve slově
 # rozdělení na slova bez čárek a teček
 pocet_pismen = []
 for slovo in text: 
