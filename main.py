@@ -1,3 +1,4 @@
+from collections import Counter
 '''
 projekt_1.py: první projekt do Engeto Online Python Akademie
 
@@ -54,22 +55,14 @@ uzivatele = {
 
 # kontrola ověření hesla a jména
 if uzivatele.get(username) == password:
-    print("Welcom to the app,", username,"\n","We have 3 texts to be analyzed.","\n",znak)
-    vyber_textu = input("Enter a number btw. 1 and 3 to select: ")
+    print("Welcome to the app,", username,"\n","We have 3 texts to be analyzed.","\n",znak)
     try:
-        vyber_textu == int(vyber_textu) #řeší, jestli bylo zadáno číslo nebo text
-        if int(vyber_textu) == 1:   #výběr prvního odstavce z TEXTu
-            text = TEXTS[0].split() 
-            print(znak)
-        elif int(vyber_textu) == 2: #výběr druhého odstavce z TEXTu
-            text = TEXTS[1].split() 
-            print(znak)
-        elif int(vyber_textu) == 3: #výběr třetího odstavce z TEXTu
-            text = TEXTS[2].split() 
-            print(znak)
-    except:
-        print("You have made a wrong selection. The program ends.")
-        exit() #ukončeního programu, když nevyberé uživatel text 1 - 3
+        vyber_textu = input("Enter a number btw. 1 and 3 to select: ")
+        text = TEXTS[int(vyber_textu) - 1].split() #vyber odstavce uzivatelem
+        print(znak)
+    except ValueError:
+        print("You have made a wrong selection. The program ends.") #ukončeního programu, když nevyberé uživatel text 1 - 3
+        exit()
 else: 
     print("Unregistered user, terminating the program..") 
     exit() #ukončení když není uživatel registrován
@@ -80,6 +73,7 @@ zacinaji_velkym_pismem = 0
 mala_pismena = 0
 cisla = 0
 pocet_slov = len(text)
+total_sum = 0
 
 for slovo in text:
     if slovo.islower():
@@ -87,20 +81,16 @@ for slovo in text:
     elif slovo[0].isalpha():
         zacinaji_velkym_pismem += 1
     elif slovo.isnumeric():
+        total_sum += int(slovo)
         cisla += 1
     elif slovo.isupper():
         velka_pismena += 1
 
-# soucet všech čísel v textu
-total_sum = 0
-for cislo in text:
-    if cislo.isnumeric():
-        total_sum += int(cislo)
 
-# rozdělení na slova bez čárek a teček
+# rozdělení na slova bez čárek a teček a pomlček
 pocet_pismen = []
-for slovo in text: 
-    pocet_pismen.append(len((slovo.replace('.', '').replace(',', '')))) 
+for slovo in text:
+    pocet_pismen.append(len((slovo.replace('.', '').replace(',', '').replace('-', ''))))
 
 # vypis podle zadání
 print(f'''There are {pocet_slov} words in the selected text.
@@ -111,18 +101,11 @@ There are {cisla} numeric strings.
 The sum of all the numbers {total_sum}\n''', znak
 )
 
-# vytvoření tabulky s počtem stejně dlouhých slov
-tabulka = dict()
-radek = 1
-while radek <= len(pocet_pismen): 
-    tabulka[radek] = pocet_pismen.count(radek)
-    radek += 1
-
-#vygenerování tabulky bez prázdných řádku
-print(f'''LEN|\tOCCURENCES\t|NR.\n{znak}''')
-for key in tabulka: 
-    if tabulka[key] != 0:
-        if key < 10: #zarovnani označených řádků - jednociferných
-            print("",key,"|",tabulka[key] * hvezda,(17 - tabulka[key]) * " ","|",tabulka[key])
-        else: #zarovnani označených řádků - dvouciferných
-            print(key,"|",tabulka[key] * hvezda,(17 - tabulka[key]) * " ","|",tabulka[key])
+# tabulka s počtem stejně dlouhých slov
+tabulka = Counter(sorted(pocet_pismen))
+print("LEN|\tOCCURENCES","{:^15}".format("|NR."))
+for key in tabulka:
+    if key < 10: #zarovnani označených řádků - jednociferných
+       print("",key,"|",tabulka[key] * hvezda,(17 - tabulka[key]) * " ","|",tabulka[key])
+    else: #zarovnani označených řádků - dvouciferných
+        print(key,"|",tabulka[key] * hvezda,(17 - tabulka[key]) * " ","|",tabulka[key])
